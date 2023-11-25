@@ -2,13 +2,8 @@ import axios from 'axios';
 
 import { API_NOTIFICATION_MESSAGES, SERVICE_URLS} from '../constants/config';
 import { getAccessToken, getType } from '../utils/common-utils';
-import appInsights from 'applicationinsights';
-
 
 const API_URL = 'https://blogoptimize.azurewebsites.net/';
-
-appInsights.setup('91892bc9-9b1a-4bd3-8977-525c8859dcd1').start();
-
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -21,15 +16,6 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     function (config) {
-        // Log request information to Application Insights
-    appInsights.defaultClient.trackEvent({
-        name: 'HttpRequest',
-        properties: {
-          method: config.method,
-          url: config.url,
-          headers: JSON.stringify(config.headers),
-        },
-      });
         if (config.TYPE.params){
             config.params = config.TYPE.params;
         } else if (config.TYPE.query){
@@ -45,15 +31,6 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
     function (response) {
-        // Log response information to Application Insights
-    appInsights.defaultClient.trackEvent({
-        name: 'HttpResponse',
-        properties: {
-          status: response.status,
-          headers: JSON.stringify(response.headers),
-          data: JSON.stringify(response.data),
-        },
-      });
         return processResponse(response);
     },
     function (error) {
